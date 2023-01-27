@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background = "@drawable/rounborderstyle"
+    android:backgroundTint="#54819796"
+    android:gravity="center_horizontal|center_vertical"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/pokeimageView"
+        android:layout_width="96dp"
+        android:layout_height="128dp"
+
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/poketextView"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:backgroundTint="#800B0E10"
+        android:text="Button"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp" />
+
+</LinearLayout>

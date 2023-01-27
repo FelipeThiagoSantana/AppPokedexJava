@@ -1,0 +1,5 @@
+#!/bin/bash
+THIS_DIR=$(cd "$(dirname "$0")" && pwd)
+ANDROID_NDK_ROOT=$(cd "$THIS_DIR/../../.." && pwd)
+. "$ANDROID_NDK_ROOT/build/tools/ndk_bin_common.sh"
+"$ANDROID_NDK_PYTHON" "$THIS_DIR/ndk-stack.py" "$@"

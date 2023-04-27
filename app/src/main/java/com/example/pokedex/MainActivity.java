@@ -1,7 +1,13 @@
 package com.example.pokedex;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,21 +29,58 @@ public class MainActivity extends AppCompatActivity {
 
     private Retrofit retrofit;
     private static final String TAG = "POKEDEX";
+    private Button poketextView;
+
+
 
     private RecyclerView recyclerView;
     private ListPokemonAdapter listPokemonAdapter;
-    private  int offset; //Estou usando essa variavel para limitar a busca por pokemons
+    private ListPokemonAdapter infopokemon;
+    private int offset; //Estou usando essa variavel para limitar a busca por pokemons
     private boolean loadPokemon;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         recyclerView = findViewById(R.id.recyclerView);
+
         listPokemonAdapter = new ListPokemonAdapter(this);
+
         recyclerView.setAdapter(listPokemonAdapter);
+
+        //evento de click
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(
+                        getApplicationContext(),
+                        recyclerView,
+                        new RecyclerItemClickListener.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                Toast.makeText(
+                                        getApplicationContext(), "Pokemon: " + listPokemonAdapter.getDataset().get(position).getName(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onLongItemClick(View view, int position) {
+                                Toast.makeText(
+                                        getApplicationContext(),
+                                        "Click longo",
+                                        Toast.LENGTH_LONG).show();
+
+                            }
+
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                            }
+                        }
+                )
+        );
+
         recyclerView.setHasFixedSize(true);
         //Esse parametro faz com que liste 3 pokemon por fileira
         final GridLayoutManager layoutManager = new GridLayoutManager(this,3);
@@ -48,10 +91,7 @@ public class MainActivity extends AppCompatActivity {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
 
-                 }
-
-
-
+            }
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -73,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+
+
+
+
         });
 
 //Retrofit aqui a base da url da api
@@ -84,13 +128,12 @@ public class MainActivity extends AppCompatActivity {
         offset = 0;
 
         getData(offset);
-
     }
 
 // esse metodo pegar os dados da API
     private void getData(int offset){
        PokeapiService service = retrofit.create(PokeapiService.class);
-       Call<PokemonResponse> pokemonResponseCall =  service.getListPokemon(20,offset); //Esse offest configura o numero limite de pokemon
+       Call<PokemonResponse> pokemonResponseCall =  service.getListPokemon(20,offset); //ESFokemon
 
        pokemonResponseCall.enqueue(new Callback<PokemonResponse>() {
            @Override
@@ -99,12 +142,9 @@ public class MainActivity extends AppCompatActivity {
                loadPokemon = true; //Instanciando a variavel para garantir o carregamento
 
                if (response.isSuccessful()){
-
                    PokemonResponse pokemonResponse = response.body();
                    ArrayList<Pokemon> listPokemon = pokemonResponse.getResults();
-
                    listPokemonAdapter.addListPokemon(listPokemon);
-
                }
                else{
                    Log.e(TAG, "onResponse: " + response.errorBody());
